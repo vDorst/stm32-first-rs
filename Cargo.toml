@@ -1,0 +1,51 @@
+[package]
+name = "first"
+authors = [ "René van Dorst <opensource@vdorst.com>" ]
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+embedded-hal = "0.2"
+nb = "1"
+cortex-m = "0.7"
+cortex-m-rt = "0.7"
+stm32f4 = "0.14.0"
+smart-leds = "0.3.0"
+ws2812-spi = { version = "0.4.0", features = [] }
+defmt = { version = "0.3" }
+defmt-rtt =  { version = "0.3" }
+panic-probe = { version = "0.3.0", features = ["print-defmt"] }
+usb-device = "0.2"
+usbd-serial = "0.1"
+
+[dependencies.stm32f4xx-hal]
+git = "https://github.com/stm32-rs/stm32f4xx-hal/"
+rev = "1baef64a1ca20b1563a9d70e01acae7b60c7eafe"
+# version = "1baef64a1ca20b1563a9d70e01acae7b60c7eafe"
+features = ["rt", "stm32f401", "usb_fs"] # replace the model of your microcontroller here
+
+[features]
+device-selected = []
+rt = ["stm32f4/rt"]
+# Note: stm32f4 has only one feature for some very similar device families,
+# so it's intended for e.g. stm32f405/415 to both enable stm32f4/stm32f405.
+stm32f401 = ["stm32f4/stm32f401", "device-selected"]
+
+[profile.dev]
+incremental = false
+codegen-units = 1
+debug = true
+
+[profile.release]
+codegen-units = 1
+debug = 2
+debug-assertions = false
+incremental = false
+# NOTE disabled to work around issue rust-lang/rust#90357
+# the bug results in log messages not having location information
+# (the line printed below the log message that contains the file-line location)
+# lto = 'fat'
+opt-level = "s"
+overflow-checks = true
